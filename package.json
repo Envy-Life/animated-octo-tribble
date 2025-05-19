@@ -1,0 +1,33 @@
+{
+  "name": "pvp_clone",
+  "version": "0.0.1",
+  "description": "",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.13.8",
+    "@types/node-fetch": "^2.6.12",
+    "@types/pg": "^8.11.11",
+    "drizzle-kit": "^0.30.6",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  },
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "typeorm": "typeorm-ts-node-commonjs"
+  },
+  "dependencies": {
+    "@wormhole-foundation/sdk": "^1.14.0",
+    "body-parser": "^2.2.0",
+    "dotenv": "^16.4.7",
+    "drizzle-orm": "^0.41.0",
+    "ethers": "^6.13.5",
+    "express": "^4.21.2",
+    "helius-sdk": "^1.4.2",
+    "hyperliquid": "^1.7.4",
+    "pg": "^8.14.1",
+    "telegraf": "^4.16.3",
+    "viem": "^2.23.5",
+    "web3": "^4.16.0"
+  }
+}

@@ -1,0 +1,1 @@
+ALTER TABLE "user_wallets" ADD COLUMN "private_key" varchar(255);
