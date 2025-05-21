@@ -1,18 +1,17 @@
-import { Telegraf, Markup, Scenes, session } from "telegraf";
-import { BotWizardSession } from "..";
 import { encodeBase58, ethers } from 'ethers';
 import { randomBytes } from 'crypto';
 import { Keypair } from '@solana/web3.js';
 import * as schema from '../db/schema';
-import {db, helius} from "..";
+import { db, helius } from "..";
 import { sql } from "drizzle-orm";
+import { MyContext } from "../helpers/grammy";
 
-async function initialiseUser(ctx: Scenes.WizardContext<BotWizardSession>) {
+async function initialiseUser(ctx: MyContext) {
     // Generate a random EVM wallet
     const evmWallet = ethers.Wallet.createRandom();
     const evmAddress = evmWallet.address;
     const evmPrivateKey = evmWallet.privateKey;
-    
+
     // Generate a random Solana wallet
     const seed = randomBytes(32);
     const solanaKeypair = Keypair.fromSeed(seed);
@@ -52,7 +51,7 @@ async function initialiseUser(ctx: Scenes.WizardContext<BotWizardSession>) {
         rollback(ctx);
         await rollbackSolWebhooks(solanaAddress);
         await rollbackArbWebhooks(evmAddress);
-        console.error('Error during user initialization:', error); 
+        console.error('Error during user initialization:', error);
         throw error;
     }
 }
@@ -87,7 +86,7 @@ async function updateArbWebhooks(address: string) {
             addItems: [
                 address.toLowerCase()
             ],
-            
+
         })
     };
 
@@ -110,7 +109,7 @@ async function rollbackArbWebhooks(address: string) {
             removeItems: [
                 address.toLowerCase()
             ],
-            
+
         })
     };
 
@@ -119,7 +118,7 @@ async function rollbackArbWebhooks(address: string) {
     console.log(`Webhook updated for address: ${address}`);
 }
 
-async function rollback(ctx: Scenes.WizardContext<BotWizardSession>) {
+async function rollback(ctx: MyContext) {
     await db.transaction(async (tx) => {
         await tx.delete(schema.userWallets).where(
             sql`${schema.userWallets.userId} = ${ctx.from?.id ? ctx.from.id.toString() : ''}`

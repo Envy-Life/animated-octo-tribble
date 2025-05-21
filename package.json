@@ -17,12 +17,16 @@
     "typeorm": "typeorm-ts-node-commonjs"
   },
   "dependencies": {
+    "@grammyjs/auto-retry": "^2.0.2",
+    "@grammyjs/conversations": "^2.1.0",
+    "@grammyjs/runner": "^2.0.3",
     "@wormhole-foundation/sdk": "^1.14.0",
     "body-parser": "^2.2.0",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.41.0",
     "ethers": "^6.13.5",
     "express": "^4.21.2",
+    "grammy": "^1.36.1",
     "helius-sdk": "^1.4.2",
     "hyperliquid": "^1.7.4",
     "pg": "^8.14.1",
