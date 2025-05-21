@@ -17,6 +17,9 @@ importers:
       '@grammyjs/runner':
         specifier: ^2.0.3
         version: 2.0.3(grammy@1.36.1)
+      '@solana/web3.js':
+        specifier: ^1.98.2
+        version: 1.98.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)
       '@wormhole-foundation/sdk':
         specifier: ^1.14.0
         version: 1.18.0(bufferutil@4.0.9)(got@11.8.6)(typescript@5.8.3)(utf-8-validate@5.0.10)

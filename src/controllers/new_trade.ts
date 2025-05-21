@@ -5,7 +5,7 @@ import { and, eq } from "drizzle-orm";
 import { long, short } from "../scripts/trade";
 import { ethers } from "ethers";
 import { InlineKeyboard } from "grammy";
-import { MyContext } from "../helpers/grammy";
+import { MyContext, MyConversationContext } from "../helpers/grammy";
 import { Conversation } from "@grammyjs/conversations";
 
 const hlClient = new Hyperliquid({
@@ -13,16 +13,16 @@ const hlClient = new Hyperliquid({
 });
 
 export async function newTradeController(
-  ctx: MyContext
+  ctx: MyConversationContext
 ) {
   await ctx.conversation.enter("new_trade");
 }
 
 // Define the conversation
 export async function newTradeConversation(
-  conversation: Conversation,
-  ctx: MyContext
-) {
+  conversation: Conversation<MyContext, MyConversationContext>,
+  ctx: MyConversationContext
+): Promise<void> {
   let selectedMarket: any | null = null;
   let leverage: string | null = null;
   let tradeType: "limit_order" | "market_order" | null = null;
@@ -237,8 +237,11 @@ export async function newTradeConversation(
     await confirmationUpdate.editMessageText("Order confirmed! Processing...");
     await confirmationUpdate.answerCallbackQuery();
 
-    // Call place_trade
-    await place_trade(ctx, selectedMarket.name, leverage, tradeType, positionSide, quantity, limitPrice);
+    if (selectedMarket && leverage && tradeType && positionSide && quantity) {
+      await place_trade(ctx, selectedMarket.name, leverage, tradeType, positionSide, quantity, limitPrice);
+    } else {
+      await ctx.reply("Error: Some trade parameters were not set. Please start over.");
+    }
 
   } else if (confirmationInput === "cancel_order") {
     await confirmationUpdate.editMessageText("Order canceled.");
@@ -305,8 +308,8 @@ async function place_trade(
     walletAddress: evmAddressHl,
   });
 
-  if (!sdk || !agentSDK) {
-    await ctx.reply("Error initializing Hyperliquid SDK.");
+  if (!agentSDK) {
+    await ctx.reply("Error initializing Hyperliquid Agent SDK.");
     return;
   }
 
@@ -323,8 +326,8 @@ async function place_trade(
 
   await ctx.reply(
     `Trade executed:\n` +
-    `Market: ${marketName}\n` + // Use marketName parameter
-    `Leverage: ${leverage}x\n` + // Add leverage parameter to reply
+    `Market: ${marketName}\n` +
+    `Leverage: ${leverage}x\n` +
     `Type: ${tradeType}\n` +
     `Side: ${positionSide}\n` +
     `Size: ${quantity}\n` +
