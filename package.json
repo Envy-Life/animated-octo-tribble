@@ -19,6 +19,7 @@
   "dependencies": {
     "@coral-xyz/anchor": "^0.31.1",
     "@grammyjs/auto-retry": "^2.0.2",
+    "@grammyjs/chat-members": "^1.2.0",
     "@grammyjs/conversations": "^2.1.0",
     "@grammyjs/runner": "^2.0.3",
     "@solana/spl-token": "^0.4.13",

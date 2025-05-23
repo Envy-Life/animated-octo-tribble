@@ -7,6 +7,7 @@ import { ethers } from "ethers";
 import { InlineKeyboard } from "grammy";
 import { MyContext, MyConversationContext } from "../helpers/grammy";
 import { Conversation } from "@grammyjs/conversations";
+import { updateClanStatsForTrade } from "../helpers/clan_management";
 
 const hlClient = new Hyperliquid({
   enableWs: false,
@@ -333,5 +334,9 @@ async function place_trade(
     `Size: ${quantity}\n` +
     (limitPrice ? `Limit Price: ${limitPrice}` : "")
   );
+
+  // Update clan stats for the trade
+  const tradeVolume = Number(quantity) * (limitPrice ? Number(limitPrice) : 1); // Approximate volume calculation
+  await updateClanStatsForTrade(userId, tradeVolume);
 }
 

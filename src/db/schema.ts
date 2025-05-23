@@ -29,7 +29,8 @@ export const users = pgTable("users", {
 
 // Clans table to store clan/tg group information
 export const clans = pgTable("clans", {
-  clanId: serial("clan_id").primaryKey(), // tg group ID
+  clanId: serial("clan_id").primaryKey(),
+  telegramGroupId: numeric("telegram_group_id").notNull().unique(), // Telegram group ID
   clanName: varchar("clan_name", { length: 255 }).notNull(),
   clanType: varchar("clan_type", { length: 50 }).notNull(), // 'public', 'private'
   usersCount: integer("users_count").default(0),
