@@ -17,9 +17,11 @@
     "typeorm": "typeorm-ts-node-commonjs"
   },
   "dependencies": {
+    "@coral-xyz/anchor": "^0.31.1",
     "@grammyjs/auto-retry": "^2.0.2",
     "@grammyjs/conversations": "^2.1.0",
     "@grammyjs/runner": "^2.0.3",
+    "@solana/spl-token": "^0.4.13",
     "@solana/web3.js": "^1.98.2",
     "@wormhole-foundation/sdk": "^1.14.0",
     "body-parser": "^2.2.0",

@@ -7,100 +7,123 @@ import { Hyperliquid } from "hyperliquid";
 //     walletAddress: process.env.HL_ACCOUNT_ADDRESS
 //   });
 
+async function long(
+  sdk: Hyperliquid,
+  agentSDK: Hyperliquid,
+  ticker: string,
+  leverage: number,
+  size: number,
+) {
+  await sdk.ensureInitialized();
 
-async function long(sdk : Hyperliquid, agentSDK : Hyperliquid,ticker: string, leverage: number, size: number) {
-    await sdk.ensureInitialized()
+  console.log(`Longing ${size} ${ticker} with ${leverage}x leverage`);
 
-    console.log(`Longing ${size} ${ticker} with ${leverage}x leverage`);
+  const metadata = await sdk.info.perpetuals.getMeta();
 
-    const metadata = await sdk.info.perpetuals.getMeta()
+  const assetId = metadata.universe.findIndex((perp) =>
+    perp.name.startsWith(ticker.toUpperCase()),
+  );
 
-    const assetId = metadata.universe.findIndex((perp) => perp.name.startsWith(ticker.toUpperCase()))
+  const tickerMetadata = metadata.universe[assetId];
 
-    const tickerMetadata = metadata.universe[assetId]
+  if (!assetId) {
+    console.error(`Error: ${ticker} is not a valid asset`);
+    return;
+  }
 
-    if (!assetId) {
-        console.error(`Error: ${ticker} is not a valid asset`);
-        return;
-    }
-    
-    const assetCtx = (await sdk.info.perpetuals.getMetaAndAssetCtxs())[1][assetId]
-    console.log(assetCtx);
+  const assetCtx = (await sdk.info.perpetuals.getMetaAndAssetCtxs())[1][
+    assetId
+  ];
+  console.log(assetCtx);
 
-    await agentSDK.exchange.updateLeverage(
-        tickerMetadata.name, "cross", leverage
-    )
+  await agentSDK.exchange.updateLeverage(
+    tickerMetadata.name,
+    "cross",
+    leverage,
+  );
 
-    const tx = await agentSDK.custom.marketOpen(
-        tickerMetadata.name,
-        true,
-        Math.round(100 * size / Number(assetCtx.markPx)) / 100,
-    );
+  const tx = await agentSDK.custom.marketOpen(
+    tickerMetadata.name,
+    true,
+    Math.round((100 * size) / Number(assetCtx.markPx)) / 100,
+  );
 
-    console.log(tx);
-    
+  console.log(tx);
 }
 
-async function short(sdk : Hyperliquid, agentSDK : Hyperliquid,ticker: string, leverage: number, size: number) {
-    await sdk.ensureInitialized()
+async function short(
+  sdk: Hyperliquid,
+  agentSDK: Hyperliquid,
+  ticker: string,
+  leverage: number,
+  size: number,
+) {
+  await sdk.ensureInitialized();
 
-    console.log(`Shorting ${size} ${ticker} with ${leverage}x leverage`);
+  console.log(`Shorting ${size} ${ticker} with ${leverage}x leverage`);
 
-    const metadata = await sdk.info.perpetuals.getMeta()
+  const metadata = await sdk.info.perpetuals.getMeta();
 
-    const assetId = metadata.universe.findIndex((perp) => perp.name.startsWith(ticker.toUpperCase()))
+  const assetId = metadata.universe.findIndex((perp) =>
+    perp.name.startsWith(ticker.toUpperCase()),
+  );
 
-    const tickerMetadata = metadata.universe[assetId]
+  const tickerMetadata = metadata.universe[assetId];
 
-    if (!assetId) {
-        console.error(`Error: ${ticker} is not a valid asset`);
-        return;
-    }
-    
-    const assetCtx = (await sdk.info.perpetuals.getMetaAndAssetCtxs())[1][assetId]
-    console.log(assetCtx);
+  if (!assetId) {
+    console.error(`Error: ${ticker} is not a valid asset`);
+    return;
+  }
 
-    await agentSDK.exchange.updateLeverage(
-        tickerMetadata.name, "cross", leverage
-    )
+  const assetCtx = (await sdk.info.perpetuals.getMetaAndAssetCtxs())[1][
+    assetId
+  ];
+  console.log(assetCtx);
 
-    const tx = await agentSDK.custom.marketOpen(
-        tickerMetadata.name, 
-        false,
-        Math.round(100 * size / Number(assetCtx.markPx)) / 100,
-    );
+  await agentSDK.exchange.updateLeverage(
+    tickerMetadata.name,
+    "cross",
+    leverage,
+  );
 
-    console.log(tx);
-    console.log(tx.response);
-    
-    
+  const tx = await agentSDK.custom.marketOpen(
+    tickerMetadata.name,
+    false,
+    Math.round((100 * size) / Number(assetCtx.markPx)) / 100,
+  );
+
+  console.log(tx);
+  console.log(tx.response);
 }
 
-async function close(sdk : Hyperliquid,ticker: string) {
-    await sdk.ensureInitialized()
+async function close(sdk: Hyperliquid, ticker: string) {
+  await sdk.ensureInitialized();
 
-    console.log(`Closing ${ticker}`);
+  console.log(`Closing ${ticker}`);
 
-    const metadata = await sdk.info.perpetuals.getMeta()
-    console.log(metadata);
+  const metadata = await sdk.info.perpetuals.getMeta();
+  console.log(metadata);
 
-    const assetId = metadata.universe.findIndex((perp) => perp.name.startsWith(ticker.toUpperCase()))
-    console.log(assetId);
+  const assetId = metadata.universe.findIndex((perp) =>
+    perp.name.startsWith(ticker.toUpperCase()),
+  );
+  console.log(assetId);
 
-    const tickerMetadata = metadata.universe[assetId]
+  const tickerMetadata = metadata.universe[assetId];
 
-    if (!assetId) {
-        console.error(`Error: ${ticker} is not a valid asset`);
-        return;
-    }
+  if (!assetId) {
+    console.error(`Error: ${ticker} is not a valid asset`);
+    return;
+  }
 
-    const assetCtx = (await sdk.info.perpetuals.getMetaAndAssetCtxs())[1][assetId]
-    console.log(assetCtx);
+  const assetCtx = (await sdk.info.perpetuals.getMetaAndAssetCtxs())[1][
+    assetId
+  ];
+  console.log(assetCtx);
 
-    const tx = await sdk.custom.marketClose(tickerMetadata.name);
+  const tx = await sdk.custom.marketClose(tickerMetadata.name);
 
-    console.log(tx);
-
+  console.log(tx);
 }
 
 export { long, short, close };
