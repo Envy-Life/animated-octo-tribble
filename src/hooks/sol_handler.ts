@@ -117,7 +117,7 @@ async function bridgeSolArb(
     recieverTokenAccount,
   );
 
-  bot.telegram.sendMessage(
+  bot.api.sendMessage(
     wallet[0].userId,
     "Bridged " + amount.toString() + " USDC from Solana to Arbitrum",
   );
