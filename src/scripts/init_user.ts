@@ -5,18 +5,22 @@ import * as schema from "../db/schema";
 import { db, helius } from "..";
 import { sql } from "drizzle-orm";
 import { MyContext } from "../helpers/grammy";
+import { encrypt } from "../helpers/crypto";
 
 async function initialiseUser(ctx: MyContext) {
   // Generate a random EVM wallet
   const evmWallet = ethers.Wallet.createRandom();
   const evmAddress = evmWallet.address;
-  const evmPrivateKey = evmWallet.privateKey;
+  let evmPrivateKey = evmWallet.privateKey;
 
   // Generate a random Solana wallet
   const seed = randomBytes(32);
   const solanaKeypair = Keypair.fromSeed(seed);
   const solanaAddress = solanaKeypair.publicKey.toString();
-  const solanaPrivateKey = encodeBase58(Buffer.from(solanaKeypair.secretKey));
+  let solanaPrivateKey = encodeBase58(Buffer.from(solanaKeypair.secretKey));
+
+  evmPrivateKey = encrypt(evmPrivateKey);
+  solanaPrivateKey = encrypt(solanaPrivateKey);
 
   try {
     await db.transaction(async (tx) => {

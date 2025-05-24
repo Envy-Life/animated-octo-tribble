@@ -72,7 +72,7 @@ async function arbHookHandler(data: any) {
     })
     .execute();
 
-  bot.telegram.sendMessage(
+  bot.api.sendMessage(
     wallet[0].userId,
     "Bridged " +
       (Number(balance) / 10 ** 6).toFixed(3) +
